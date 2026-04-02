@@ -1,0 +1,64 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  
+  --color-brand-black: #050505;
+  --color-brand-white: #ffffff;
+  --color-brand-gray: #1a1a1a;
+  --color-brand-accent: #888888;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    @apply bg-[#050505] text-white font-sans antialiased selection:bg-white selection:text-black;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-sans font-extrabold tracking-tighter;
+  }
+}
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-b from-white to-white/40;
+}
+
+.pill-button {
+  @apply px-8 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2;
+}
+
+.pill-button-primary {
+  @apply bg-white text-black hover:bg-white/90;
+}
+
+.pill-button-outline {
+  @apply border border-white/20 text-white hover:bg-white/10;
+}
+
+.custom-cursor {
+  @apply fixed w-6 h-6 border border-white rounded-full pointer-events-none z-50 mix-blend-difference transition-transform duration-200 ease-out;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Admin UI */
+.input-admin {
+  @apply w-full bg-white/5 border border-white/5 rounded-2xl p-6 text-white text-sm font-medium focus:outline-none focus:border-white/20 transition-all placeholder:text-white/10;
+}
+
+.label-admin {
+  @apply block text-[10px] font-bold uppercase tracking-[0.4em] text-white/30 mb-4 ml-2;
+}
+
