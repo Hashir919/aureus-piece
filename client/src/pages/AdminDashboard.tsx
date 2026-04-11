@@ -2,18 +2,19 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { motion, AnimatePresence } from 'motion/react';
+import { Project, Testimonial, About, Category, SocialLink } from '../types';
 import { 
-  Plus, Trash2, Edit, Save, X, LogOut, 
-  Image as ImageIcon, Layout, Users, FileText,
-  Upload, ChevronRight, CheckCircle2, AlertCircle, Grid
+  Plus, Trash2, Edit, LogOut, 
+  Layout, Users, FileText,
+  Upload, CheckCircle2, AlertCircle, Grid, Link as LinkIcon
 } from 'lucide-react';
-import { Project, Testimonial, About, Category } from '../types';
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState<'projects' | 'testimonials' | 'about' | 'categories'>('projects');
+  const [activeTab, setActiveTab] = useState<'projects' | 'testimonials' | 'about' | 'categories' | 'social_links'>('projects');
   const [projects, setProjects] = useState<Project[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [socialLinks, setSocialLinks] = useState<SocialLink[]>([]);
   const [about, setAbout] = useState<About | null>(null);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -31,16 +32,18 @@ export default function AdminDashboard() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [projRes, catRes, testRes, aboutRes] = await Promise.all([
+      const [projRes, catRes, testRes, socialRes, aboutRes] = await Promise.all([
         supabase.from('portfolio').select('*, categories(*)').order('created_at', { ascending: false }),
         supabase.from('categories').select('*').order('name'),
         supabase.from('testimonials').select('*').order('id', { ascending: false }),
-        supabase.from('about').select('*').single()
+        supabase.from('social_links').select('*').order('platform'),
+        supabase.from('about').select('*').maybeSingle()
       ]);
       
       if (projRes.data) setProjects(projRes.data as any);
       if (catRes.data) setCategories(catRes.data as any);
       if (testRes.data) setTestimonials(testRes.data as any);
+      if (socialRes.data) setSocialLinks(socialRes.data as any);
       if (aboutRes.data) setAbout(aboutRes.data as any);
 
     } catch (err) {
@@ -101,7 +104,10 @@ export default function AdminDashboard() {
     
     try {
       if (activeTab === 'about') {
-        const { error } = await supabase.from('about').update(formData).eq('id', about?.id);
+        const { error } = await supabase.from('about').upsert({ 
+          id: about?.id || undefined, 
+          content: formData.content 
+        });
         if (error) throw error;
       } else {
         if (editingItem) {
@@ -125,7 +131,8 @@ export default function AdminDashboard() {
     const tableMapping = {
         'projects': 'portfolio',
         'testimonials': 'testimonials',
-        'categories': 'categories'
+        'categories': 'categories',
+        'social_links': 'social_links'
     };
     const table = tableMapping[activeTab];
 
@@ -155,6 +162,7 @@ export default function AdminDashboard() {
             { id: 'projects', label: 'Portfolio', icon: Layout },
             { id: 'categories', label: 'Categories', icon: Grid },
             { id: 'testimonials', label: 'Testimonials', icon: Users },
+            { id: 'social_links', label: 'Social Links', icon: LinkIcon },
             { id: 'about', label: 'About', icon: FileText },
           ].map((tab) => (
             <button
@@ -220,10 +228,32 @@ export default function AdminDashboard() {
               </div>
             ))}
             
-            {activeTab === 'about' && about && (
+            {activeTab === 'social_links' && socialLinks.map((s) => (
+               <div key={s.id} className="bg-white/5 p-8 rounded-3xl border border-white/5">
+                 <div className="flex justify-between mb-4">
+                   <h4 className="font-bold uppercase tracking-tight">{s.platform}</h4>
+                   <div className="flex gap-2">
+                     <button onClick={() => openEditModal(s)} className="text-white/30 hover:text-white"><Edit size={14}/></button>
+                     <button onClick={() => handleDelete(s.id)} className="text-white/30 hover:text-red-400"><Trash2 size={14}/></button>
+                   </div>
+                 </div>
+                 <p className="text-[10px] text-white/50 truncate mb-1">{s.url}</p>
+               </div>
+            ))}
+
+            {activeTab === 'about' && (
                 <div className="col-span-full bg-white/5 p-12 rounded-[40px] border border-white/5">
-                    <p className="text-lg text-white/50 leading-relaxed max-w-2xl whitespace-pre-line mb-10">{about.content}</p>
-                    <button onClick={() => openEditModal(about)} className="pill-button pill-button-outline"><Edit size={16}/> Edit Story</button>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-10">
+                        <div>
+                            <span className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-2 block">{about?.caption || 'OUR PHILOSOPHY'}</span>
+                            <h3 className="text-4xl font-black uppercase mb-4">{about?.title || 'BEYOND THE'} <span className="text-white/20">{about?.subtitle || 'VISIBLE.'}</span></h3>
+                            <p className="text-lg text-white/50 leading-relaxed whitespace-pre-line">{about?.content || 'No story content yet.'}</p>
+                        </div>
+                        {about?.image_url && (
+                            <img src={about.image_url} className="w-full aspect-square object-cover rounded-3xl grayscale opacity-50" />
+                        )}
+                    </div>
+                    <button onClick={() => openEditModal(about)} className="pill-button pill-button-outline"><Edit size={16}/> Edit About Section</button>
                 </div>
             )}
           </div>
@@ -272,8 +302,41 @@ export default function AdminDashboard() {
                     <textarea value={formData.review || ''} onChange={(e) => setFormData({...formData, review: e.target.value})} className="input-admin h-32" placeholder="Review" required />
                   </div>
                 )}
+                {activeTab === 'social_links' && (
+                   <div className="space-y-6">
+                      <select value={formData.platform || ''} onChange={(e) => setFormData({...formData, platform: e.target.value})} className="input-admin appearance-none" required>
+                        <option value="">Select Platform</option>
+                        <option value="Instagram">Instagram</option>
+                        <option value="Twitter">Twitter</option>
+                        <option value="LinkedIn">LinkedIn</option>
+                        <option value="WhatsApp">WhatsApp</option>
+                      </select>
+                      <input value={formData.url || ''} onChange={(e) => setFormData({...formData, url: e.target.value})} className="input-admin" placeholder="Link URL" required />
+                   </div>
+                )}
                 {activeTab === 'about' && (
-                   <textarea value={formData.content || ''} onChange={(e) => setFormData({...formData, content: e.target.value})} className="input-admin h-64" placeholder="Story content..." required />
+                   <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                      <div className="space-y-6">
+                        <input value={formData.caption || ''} onChange={(e) => setFormData({...formData, caption: e.target.value})} className="input-admin" placeholder="Small Caption (e.g. OUR PHILOSOPHY)" required />
+                        <input value={formData.title || ''} onChange={(e) => setFormData({...formData, title: e.target.value})} className="input-admin" placeholder="Main Title (e.g. BEYOND THE)" required />
+                        <input value={formData.subtitle || ''} onChange={(e) => setFormData({...formData, subtitle: e.target.value})} className="input-admin" placeholder="Subtitle (e.g. VISIBLE.)" required />
+                        <textarea value={formData.content || ''} onChange={(e) => setFormData({...formData, content: e.target.value})} className="input-admin h-48" placeholder="Story content..." required />
+                      </div>
+                      <div className="aspect-square bg-white/5 rounded-3xl relative overflow-hidden group border-2 border-dashed border-white/10">
+                        {formData.image_url ? (
+                          <>
+                            <img src={formData.image_url} className="w-full h-full object-cover" />
+                            <label className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer"><Upload size={24}/><input type="file" className="hidden" onChange={handleImageUpload}/></label>
+                          </>
+                        ) : (
+                          <label className="absolute inset-0 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5">
+                            {uploadLoading ? <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-white"/> : <Plus size={32}/>}
+                            <span className="text-[10px] font-bold uppercase mt-4">Upload About Image</span>
+                            <input type="file" className="hidden" onChange={handleImageUpload}/>
+                          </label>
+                        )}
+                      </div>
+                   </div>
                 )}
                 <div className="flex gap-4"><button type="submit" className="pill-button pill-button-primary">Save Changes</button><button type="button" onClick={() => setIsModalOpen(false)} className="pill-button pill-button-outline">Cancel</button></div>
               </form>

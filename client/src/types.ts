@@ -25,6 +25,15 @@ export interface Testimonial {
 export interface About {
   id: string;
   content: string;
+  title: string;
+  subtitle: string;
+  caption: string;
+  image_url?: string;
 }
 
 
+export interface SocialLink {
+  id: string;
+  platform: string;
+  url: string;
+}
