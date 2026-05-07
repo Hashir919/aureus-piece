@@ -34,23 +34,23 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 sm:p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="max-w-md w-full"
       >
-        <div className="text-center mb-12">
+        <div className="text-center mb-8 md:mb-12">
           <span className="text-[10px] font-bold tracking-[0.4em] uppercase mb-4 block text-white/40">
             Secure Access
           </span>
-          <h1 className="text-4xl font-black tracking-tighter uppercase text-white">
+          <h1 className="text-3xl md:text-4xl font-black tracking-tighter uppercase text-white">
             AUREUS<span className="text-white/20">.</span>CMS
           </h1>
         </div>
 
-        <div className="bg-white/5 border border-white/10 p-10 rounded-3xl backdrop-blur-xl">
-          <form onSubmit={handleLogin} className="space-y-6">
+        <div className="bg-white/5 border border-white/10 p-6 sm:p-10 rounded-2xl sm:rounded-3xl backdrop-blur-xl">
+          <form onSubmit={handleLogin} className="space-y-5 md:space-y-6">
             <div>
               <label className="block text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 mb-3">
                 Email
@@ -61,7 +61,7 @@ export default function Login() {
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-white/20 transition-colors font-medium"
+                  className="w-full bg-white/5 border border-white/5 rounded-xl py-3.5 md:py-4 pl-12 pr-4 text-white focus:outline-none focus:border-white/20 transition-colors font-medium text-sm"
                   placeholder="admin@aureus-piece.com"
                   required
                 />
@@ -78,7 +78,7 @@ export default function Login() {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/5 border border-white/5 rounded-xl py-4 pl-12 pr-4 text-white focus:outline-none focus:border-white/20 transition-colors font-medium"
+                  className="w-full bg-white/5 border border-white/5 rounded-xl py-3.5 md:py-4 pl-12 pr-4 text-white focus:outline-none focus:border-white/20 transition-colors font-medium text-sm"
                   placeholder="••••••••"
                   required
                 />
@@ -89,7 +89,7 @@ export default function Login() {
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-red-400 text-xs font-bold uppercase tracking-wider text-center"
+                className="text-red-400 text-[10px] font-bold uppercase tracking-wider text-center"
               >
                 {error}
               </motion.p>
@@ -105,7 +105,7 @@ export default function Login() {
           </form>
         </div>
 
-        <p className="mt-8 text-center text-white/20 text-[10px] font-bold uppercase tracking-widest">
+        <p className="mt-8 text-center text-white/20 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">
           Aureus Studio &copy; 2026 — All Rights Reserved
         </p>
       </motion.div>

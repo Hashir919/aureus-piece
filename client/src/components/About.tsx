@@ -29,22 +29,22 @@ export default function About() {
   if (loading) return null;
 
   return (
-    <section id="about" className="py-32 bg-[#050505] text-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 md:px-12">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+    <section id="about" className="py-16 md:py-32 bg-[#050505] text-white overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-24 items-center">
           <motion.div
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <span className="text-[10px] font-bold tracking-[0.4em] uppercase mb-6 block text-white/40">
+            <span className="text-[10px] font-bold tracking-[0.4em] uppercase mb-4 md:mb-6 block text-white/40">
               {about?.caption || 'Our Philosophy'}
             </span>
-            <h2 className="text-5xl md:text-7xl font-black tracking-tighter mb-12 leading-none uppercase">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-black tracking-tighter mb-6 md:mb-12 leading-none uppercase">
               {about?.title || 'BEYOND THE'} <br /> <span className="text-white/20">{about?.subtitle || 'VISIBLE.'}</span>
             </h2>
-            <div className="space-y-8 text-base md:text-lg text-white/50 font-medium leading-relaxed max-w-lg whitespace-pre-line">
+            <div className="space-y-8 text-sm md:text-base lg:text-lg text-white/50 font-medium leading-relaxed max-w-lg whitespace-pre-line">
               {about?.content || `Aureus Studio operates at the intersection of technical precision and ethereal aesthetics. We don't just build brands; we architect digital universes. Our process is a dialogue between the structured and the surreal.`}
             </div>
           </motion.div>
@@ -56,12 +56,12 @@ export default function About() {
             transition={{ duration: 1 }}
             className="relative"
           >
-            <div className="aspect-square bg-white/5 overflow-hidden rounded-3xl border border-white/10">
+            <div className="aspect-square bg-white/5 overflow-hidden rounded-2xl md:rounded-3xl border border-white/10">
               <img
                 src={about?.image_url || "https://images.unsplash.com/photo-1494438639946-1ebd1d20bf85?auto=format&fit=crop&q=80&w=1000"}
                 alt="Studio space"
                 referrerPolicy="no-referrer"
-                className="w-full h-full object-cover grayscale opacity-40 hover:opacity-60 transition-opacity duration-700"
+                className="w-full h-full object-cover opacity-60 hover:opacity-80 transition-opacity duration-700"
               />
             </div>
           </motion.div>

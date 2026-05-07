@@ -1,0 +1,13 @@
+{
+  "name": "aureus-piece-root",
+  "version": "1.0.0",
+  "scripts": {
+    "install-all": "npm install && cd client && npm install && cd ../server && npm install --legacy-peer-deps",
+    "client": "cd client && npm run dev",
+    "server": "cd server && npm run dev",
+    "dev": "npx concurrently \"npm run client\" \"npm run server\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
